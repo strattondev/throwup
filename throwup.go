@@ -27,31 +27,31 @@ func New(up ThrowUpConfig) ThrowUp {
 }
 
 func cleanConfig(up *ThrowUpConfig) {
-	if up.endpointCount <= 0 {
-		up.endpointCount = 1
+	if up.EndpointCount <= 0 {
+		up.EndpointCount = 1
 	}
 
-	if len(up.storageBase) == 0 {
-		up.storageBase = "/tmp"
+	if len(up.StorageBase) == 0 {
+		up.StorageBase = "/tmp"
 	}
 
-	if len(up.postSuccessMessage) == 0 {
-		up.postSuccessMessage = "Thank you for you upload"
+	if len(up.PostSuccessMessage) == 0 {
+		up.PostSuccessMessage = "Thank you for you upload"
 	}
 
-	if len(up.postSingleUseMessage) == 0 {
-		up.postSingleUseMessage = "Sorry, you can no longer upload files"
+	if len(up.PostSingleUseMessage) == 0 {
+		up.PostSingleUseMessage = "Sorry, you can no longer upload files"
 	}
 
-	up.storageBase = filepath.Clean(up.storageBase)
+	up.StorageBase = filepath.Clean(up.StorageBase)
 }
 
 type ThrowUpConfig struct {
-	endpointCount        int
-	storageBase          string
-	postSuccessMessage   string
-	postSingleUse        bool
-	postSingleUseMessage string
+	EndpointCount        int
+	StorageBase          string
+	PostSuccessMessage   string
+	PostSingleUse        bool
+	PostSingleUseMessage string
 }
 
 type throwUp struct {
@@ -60,7 +60,7 @@ type throwUp struct {
 }
 
 func (throwUp throwUp) Run(mux *http.ServeMux) {
-	for i := 0; i < throwUp.ThrowUpConfig.endpointCount; i++ {
+	for i := 0; i < throwUp.ThrowUpConfig.EndpointCount; i++ {
 		u := "/" + uuid.New().String()
 		mux.HandleFunc(u, throwUp.uploadHandler)
 		log.Printf(u)
@@ -72,8 +72,8 @@ func (throwUp throwUp) display(w http.ResponseWriter, template string, data inte
 }
 
 func (throwUp throwUp) uploadHandler(w http.ResponseWriter, r *http.Request) {
-	if throwUp.ThrowUpConfig.postSingleUse && throwUp.endpoints[r.RequestURI] {
-		w.Write([]byte(throwUp.ThrowUpConfig.postSingleUseMessage))
+	if throwUp.ThrowUpConfig.PostSingleUse && throwUp.endpoints[r.RequestURI] {
+		w.Write([]byte(throwUp.ThrowUpConfig.PostSingleUseMessage))
 		return
 	}
 
@@ -98,7 +98,7 @@ func (throwUp throwUp) uploadHandler(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 
-			dst, err := os.Create(throwUp.ThrowUpConfig.storageBase + "/" + part.FileName())
+			dst, err := os.Create(throwUp.ThrowUpConfig.StorageBase + "/" + part.FileName())
 
 			defer dst.Close()
 
@@ -113,7 +113,7 @@ func (throwUp throwUp) uploadHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		w.Write([]byte(throwUp.ThrowUpConfig.postSuccessMessage))
+		w.Write([]byte(throwUp.ThrowUpConfig.PostSuccessMessage))
 		throwUp.endpoints[r.RequestURI] = true
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
