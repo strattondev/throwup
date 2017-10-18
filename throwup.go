@@ -20,13 +20,13 @@ type ThrowUp interface {
 	Run(mux *http.ServeMux)
 }
 
-func New(up ThrowUpConfig) ThrowUp {
+func New(up Config) ThrowUp {
 	cleanConfig(&up)
 
 	return throwUp{up, make(map[string]bool)}
 }
 
-func cleanConfig(up *ThrowUpConfig) {
+func cleanConfig(up *Config) {
 	if up.EndpointCount <= 0 {
 		up.EndpointCount = 1
 	}
@@ -46,7 +46,7 @@ func cleanConfig(up *ThrowUpConfig) {
 	up.StorageBase = filepath.Clean(up.StorageBase)
 }
 
-type ThrowUpConfig struct {
+type Config struct {
 	EndpointCount        int
 	StorageBase          string
 	PostSuccessMessage   string
@@ -55,7 +55,7 @@ type ThrowUpConfig struct {
 }
 
 type throwUp struct {
-	ThrowUpConfig ThrowUpConfig
+	ThrowUpConfig Config
 	endpoints     map[string]bool
 }
 
