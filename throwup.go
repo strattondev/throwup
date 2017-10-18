@@ -1,12 +1,12 @@
 package throwup
 
 import (
-	"net/http"
-	"io"
-	"os"
 	"github.com/google/uuid"
-	"log"
 	"html/template"
+	"io"
+	"log"
+	"net/http"
+	"os"
 	"path/filepath"
 )
 
@@ -47,16 +47,16 @@ func cleanConfig(up *ThrowUpConfig) {
 }
 
 type ThrowUpConfig struct {
-	endpointCount int
-	storageBase   string
-	postSuccessMessage string
-	postSingleUse bool
+	endpointCount        int
+	storageBase          string
+	postSuccessMessage   string
+	postSingleUse        bool
 	postSingleUseMessage string
 }
 
 type throwUp struct {
 	ThrowUpConfig ThrowUpConfig
-	endpoints map[string]bool
+	endpoints     map[string]bool
 }
 
 func (throwUp throwUp) Run(mux *http.ServeMux) {
@@ -68,7 +68,7 @@ func (throwUp throwUp) Run(mux *http.ServeMux) {
 }
 
 func (throwUp throwUp) display(w http.ResponseWriter, template string, data interface{}) {
-	templates.ExecuteTemplate(w, template + ".html", data)
+	templates.ExecuteTemplate(w, template+".html", data)
 }
 
 func (throwUp throwUp) uploadHandler(w http.ResponseWriter, r *http.Request) {
